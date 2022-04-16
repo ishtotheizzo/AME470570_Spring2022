@@ -63,7 +63,39 @@ app.post('/uploadFile', function(req, res){
     var fileType =  req.files.input.type;
     var tmpPath = req.files.input.path;
     var s3Path = '/' + intname;
-    
+
+    fs.readFile(tmpPath, function (err, data) {
+        var params = {
+            Bucket:'bucket470570',
+            ACL:'public-read',
+            Key:intname,
+            Body: data,
+            ServerSideEncryption : 'AES256'
+        };
+        s3.putObject(params, function(err, data) {
+              var obj = {
+                time: new Date().getTime(),
+                url: intname,
+                userid: req.user.local.email,
+                filter: 'none',
+                id: md5(req.user.local.email +  new Date().getTime().toString()),
+                name: "Untitled"
+              }
+
+            db.collection("images").insert(obj, function(e,r){
+              res.send("1");
+            });
+        });
+    });
+});
+
+app.post('/editImage', function(req, res){
+    var intname = req.body.fileInput;
+    var filename = req.files.input.name;
+    var fileType =  req.files.input.type;
+    var tmpPath = req.files.input.path;
+    var s3Path = '/' + intname;
+
     fs.readFile(tmpPath, function (err, data) {
         var params = {
             Bucket:'bucket470570',
@@ -145,12 +177,40 @@ app.get("/addFeed", function (req, res) {
   });
 });
 
-app.get("/deleteFeed", function (req, res) {
-  var id = req.query.id;
-  db.collection("data").remove({id:id}, function(e,r){
-      res.send("1");
-  });
-});
+app.post('/deleteImage', function(req, res){
+    var intname = req.query.id;
+    //var filename = req.files.input.name;
+    //var fileType =  req.files.input.type;
+    //var tmpPath = req.files.input.path;
+    //var s3Path = '/' + intname;
+    // code from https://stackoverflow.com/questions/27753411/how-do-i-delete-an-object-on-aws-s3-using-javascript
+
+    const params =
+    {
+          Bucket:'bucket470570',
+          ACL:'public-read',
+          Key:intname,
+          Body: data,
+          ServerSideEncryption : 'AES256'
+    };
+
+    try {
+      s3.headObject(params).promise()
+      console.log("File Obtainted")
+      try {
+        s3.deleteObject(params).promise()
+        console.log("file deleted Successfully")
+      }
+        catch (err) {
+         console.log("ERROR in file Deleting : " + JSON.stringify(err))
+        }
+      } catch (err) {
+        console.log("File not Found ERROR : " + err.code)
+                    }
+
+      });
+
+
 
 
 app.get("/editFeed", function (req, res) {
