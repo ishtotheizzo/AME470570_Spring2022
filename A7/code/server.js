@@ -179,6 +179,7 @@ app.get("/addFeed", function (req, res) {
 
 app.post('/deleteImage', function(req, res){
     var intname = req.query.id;
+    var keyName = req.query.url;
     //var filename = req.files.input.name;
     //var fileType =  req.files.input.type;
     //var tmpPath = req.files.input.path;
@@ -189,7 +190,7 @@ app.post('/deleteImage', function(req, res){
     {
           Bucket:'bucket470570',
           ACL:'public-read',
-          Key:intname,
+          Key: keyName,
           Body: data,
           ServerSideEncryption : 'AES256'
     };
@@ -208,7 +209,10 @@ app.post('/deleteImage', function(req, res){
         console.log("File not Found ERROR : " + err.code)
                     }
 
-      });
+      db.collection("images").remove({id:id}, function(e,r){
+          res.send("1");
+
+  });
 
 
 
@@ -216,9 +220,11 @@ app.post('/deleteImage', function(req, res){
 app.get("/editFeed", function (req, res) {
   var id = req.query.id;
   var newName = req.query.newName;
+  var newFilter = req.query.newFilter;
   db.collection("data").findOne({id:id}, function(e,r){
     console.log(r);
     r.name = newName;
+    r.filter = newFilter;
     db.collection("data").save(r, function(e1,r1){
       res.send("1");
     });

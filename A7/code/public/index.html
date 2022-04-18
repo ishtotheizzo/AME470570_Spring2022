@@ -262,8 +262,6 @@ function updateFriends()
             "<div style='background-image:url(https://bucket470570.s3-us-west-2.amazonaws.com/" + list[i].url + ")' class='thumbnail'></div>" +
             "<h1>" + list[i].name + "</h1>" +
             "</button>";
-
-            // edit and delete
         }
 
         if(i==0){
@@ -273,14 +271,14 @@ function updateFriends()
         document.getElementById("images").innerHTML  = markup;
       }
 
+      var currImgIndex = 0;
       function imgSelected(index){
+        currImgIndex = index;
         var data = allImages[index];
+        var filter = allimages[index].filter;
         document.getElementById("fullImage").src = "https://bucket470570.s3-us-west-2.amazonaws.com/" + data.url
-        markup = "<button class = 'waves-effect waves-light btn red' style='float:right' onclick='deleteImage("+i+")'><i class='material-icons left'>delete</i>Delete Image</button> <br>
-        <button class = 'waves-effect waves-light btn blue' style='float:right' onclick='editImage("+i+")'><i class='material-icons left'>pencil</i>Edit Image Title</button>"
+        markup += '<a class="waves-effect waves-light btn red" style="position:fixed;bottom:0;left:0;width:100px" href="javascript:deleteFeed('+index+')"><i class="material-icons left">delete</i>Delete Feed</a>' + '<a class="waves-effect waves-light btn red" style="position:fixed;bottom:0;left:0;width:100px" href="javascript:deleteFeed('+index+')"><i class="material-icons left">delete</i>Delete Feed</a>'
       }
-
-
 
       function feedSelected(index)
       {
@@ -313,6 +311,7 @@ function updateFriends()
       {
         var list = jsonObj.feed.results;
         var markup = '<a class="waves-effect waves-light btn blue" href="javascript:editFeed('+index+')"><i class="material-icons left">create</i>Edit Feed</a>'
+          + '<a class="waves-effect waves-light btn red" style="float:right" href="javascript:deleteFeed('+index+')"><i class="material-icons left">delete</i>Delete Feed</a>'
  //       var markup = "<button onclick=editFeed("+index+")><h2>Edit This Feed<h2></button>"
  //           + "<button onclick=deleteFeed("+index+")><h2>Delete This Feed<h2></button>";
         for (var i = 0; i < list.length; i++){
@@ -351,21 +350,23 @@ function updateFriends()
       }
 
       function deleteImage(index){
-        var id = allImages[index];
+        var id = allImages[index].id;
+        var deleteName = allImages[index].url
         var x = confirm("Are you sure?");
         if(!x) return;
-        var url = "./deleteimage?id=" + id;
+        var url = "./deleteImage?id=" + id + "&url=" + deleteName;
         loadURL(url, function(data){
           start();
           document.getElementById("itemList").innerHTML = "";
         });
       }
 
-      function editImage(index){
+      function editFeed(index){
         var title = allImages[index].name;
         var id = allImages[index].id;
         var newName = prompt("Edit Feed Name:", title);
-        var url = "./editImage?id=" + id + "&newName=" + newName;
+        var newFilter = allImages[index].fitler;
+        var url = "./editFeed?id=" + id + "&newName=" + newName + "&newFilter" + newFilter;
         loadURL(url, function(data){
           start(
             function(){ $("#feeds button:nth-of-type("+(index+1)+")").addClass("selected");
@@ -434,6 +435,8 @@ var doLogout = function()
                   '
                   >
               </a>
+
+
         </div>
 
         <div class='submenu'>
