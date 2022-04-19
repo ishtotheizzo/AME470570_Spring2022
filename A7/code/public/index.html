@@ -238,6 +238,7 @@ function updateFriends()
       var allImages;
       var jsonObj;
       var choices;
+
       function start(callback){
         $("#itemList .submenu").fadeOut(0);
         $('select').formSelect();
@@ -248,6 +249,7 @@ function updateFriends()
           choices.setValue(aInfo.friends);
           document.getElementById("fname").value = aInfo.fname || "";
           document.getElementById("lname").value = aInfo.lname || "";
+
         });
 
       }
@@ -272,12 +274,13 @@ function updateFriends()
       }
 
       var currImgIndex = 0;
+
+
       function imgSelected(index){
         currImgIndex = index;
         var data = allImages[index];
-        var filter = allimages[index].filter;
-        document.getElementById("fullImage").src = "https://bucket470570.s3-us-west-2.amazonaws.com/" + data.url
-        markup += '<a class="waves-effect waves-light btn red" style="position:fixed;bottom:0;left:0;width:100px" href="javascript:deleteFeed('+index+')"><i class="material-icons left">delete</i>Delete Feed</a>' + '<a class="waves-effect waves-light btn red" style="position:fixed;bottom:0;left:0;width:100px" href="javascript:deleteFeed('+index+')"><i class="material-icons left">delete</i>Delete Feed</a>'
+        var imageURL = allImages[index].url;
+        document.getElementById("fullImage").src = "https://bucket470570.s3-us-west-2.amazonaws.com/" + imageURL;
       }
 
       function feedSelected(index)
@@ -310,10 +313,7 @@ function updateFriends()
       function generateMarkup(index)
       {
         var list = jsonObj.feed.results;
-        var markup = '<a class="waves-effect waves-light btn blue" href="javascript:editFeed('+index+')"><i class="material-icons left">create</i>Edit Feed</a>'
-          + '<a class="waves-effect waves-light btn red" style="float:right" href="javascript:deleteFeed('+index+')"><i class="material-icons left">delete</i>Delete Feed</a>'
- //       var markup = "<button onclick=editFeed("+index+")><h2>Edit This Feed<h2></button>"
- //           + "<button onclick=deleteFeed("+index+")><h2>Delete This Feed<h2></button>";
+
         for (var i = 0; i < list.length; i++){
          markup += "<button onclick='itemClicked("+ i +")'>" +
             "<img src='"+ list[i].artworkUrl100 +"'>" +
@@ -351,21 +351,23 @@ function updateFriends()
 
       function deleteImage(index){
         var id = allImages[index].id;
-        var deleteName = allImages[index].url
+        //var deleteName = allImages[index].url
         var x = confirm("Are you sure?");
         if(!x) return;
-        var url = "./deleteImage?id=" + id + "&url=" + deleteName;
+        var url = "/deleteImage?id=" + id;
         loadURL(url, function(data){
           start();
-          document.getElementById("itemList").innerHTML = "";
+          feedSelected(1);
+          generateImageList();
+          document.getElementById("itemDetails").innerHTML = "";
         });
       }
 
       function editFeed(index){
         var title = allImages[index].name;
         var id = allImages[index].id;
-        var newName = prompt("Edit Feed Name:", title);
-        var newFilter = allImages[index].fitler;
+        var newName = prompt("Edit Name of Image:", title);
+        var newFilter = allImages[index].filter;
         var url = "./editFeed?id=" + id + "&newName=" + newName + "&newFilter" + newFilter;
         loadURL(url, function(data){
           start(
@@ -462,6 +464,8 @@ var doLogout = function()
         <option value='clarendon'> clarendon</option>
       </select>
       <img id='fullImage' width='100%' height='auto'>
+      <a class="waves-effect waves-light btn blue" style="float: left" href="javascript:editFeed(currImgIndex)"><i class="material-icons left">create</i>Edit Feed</a>
+      <a class="waves-effect waves-light btn red" style="float:right" href="javascript:deleteImage(currImgIndex)"><i class="material-icons left">delete</i>Delete Feed</a>
 
     </div>
       <a id='backButton' class="waves-effect waves-light btn blue" style='position:fixed;bottom:0;left:0;width:100px;' href='javascript:goBack()'><i style='margin-right:0' class="material-icons left">arrow_left</i>Back</a>

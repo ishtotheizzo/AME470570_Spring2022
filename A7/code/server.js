@@ -89,37 +89,6 @@ app.post('/uploadFile', function(req, res){
     });
 });
 
-app.post('/editImage', function(req, res){
-    var intname = req.body.fileInput;
-    var filename = req.files.input.name;
-    var fileType =  req.files.input.type;
-    var tmpPath = req.files.input.path;
-    var s3Path = '/' + intname;
-
-    fs.readFile(tmpPath, function (err, data) {
-        var params = {
-            Bucket:'bucket470570',
-            ACL:'public-read',
-            Key:intname,
-            Body: data,
-            ServerSideEncryption : 'AES256'
-        };
-        s3.putObject(params, function(err, data) {
-              var obj = {
-                time: new Date().getTime(),
-                url: intname,
-                userid: req.user.local.email,
-                filter: 'none',
-                id: md5(req.user.local.email +  new Date().getTime().toString()),
-                name: "Untitled"
-              }
-
-            db.collection("images").insert(obj, function(e,r){
-              res.send("1");
-            });
-        });
-    });
-});
 
 
 app.get("/getAllImages", function (req, res) {
@@ -177,55 +146,25 @@ app.get("/addFeed", function (req, res) {
   });
 });
 
-app.post('/deleteImage', function(req, res){
-    var intname = req.query.id;
-    var keyName = req.query.url;
-    //var filename = req.files.input.name;
-    //var fileType =  req.files.input.type;
-    //var tmpPath = req.files.input.path;
-    //var s3Path = '/' + intname;
-    // code from https://stackoverflow.com/questions/27753411/how-do-i-delete-an-object-on-aws-s3-using-javascript
+app.get('/deleteImage', function(req, res){
+    var id = req.query.id;
+    //var keyName = req.query.url;
 
-    const params =
-    {
-          Bucket:'bucket470570',
-          ACL:'public-read',
-          Key: keyName,
-          Body: data,
-          ServerSideEncryption : 'AES256'
-    };
+    db.collection("images").remove({id:id}, function(e,r){
+        res.send("1"); });
 
-    try {
-      s3.headObject(params).promise()
-      console.log("File Obtainted")
-      try {
-        s3.deleteObject(params).promise()
-        console.log("file deleted Successfully")
-      }
-        catch (err) {
-         console.log("ERROR in file Deleting : " + JSON.stringify(err))
-        }
-      } catch (err) {
-        console.log("File not Found ERROR : " + err.code)
-                    }
-
-      db.collection("images").remove({id:id}, function(e,r){
-          res.send("1");
-
-  });
-
-
+});
 
 
 app.get("/editFeed", function (req, res) {
   var id = req.query.id;
   var newName = req.query.newName;
   var newFilter = req.query.newFilter;
-  db.collection("data").findOne({id:id}, function(e,r){
+  db.collection("images").findOne({id:id}, function(e,r){
     console.log(r);
     r.name = newName;
     r.filter = newFilter;
-    db.collection("data").save(r, function(e1,r1){
+    db.collection("images").save(r, function(e1,r1){
       res.send("1");
     });
   });
