@@ -370,8 +370,9 @@ function updateFriends()
         var newFilter = allImages[index].filter;
         var url = "./editFeed?id=" + id + "&newName=" + newName + "&newFilter" + newFilter;
         loadURL(url, function(data){
-          start(
-            function(){ $("#feeds button:nth-of-type("+(index+1)+")").addClass("selected");
+          start();
+          feedSelected(1);
+          itemClicked(index);
           });
         });
       }
