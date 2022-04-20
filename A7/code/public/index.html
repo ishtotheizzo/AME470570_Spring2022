@@ -351,10 +351,10 @@ function updateFriends()
 
       function deleteImage(index){
         var id = allImages[index].id;
-        //var deleteName = allImages[index].url
+        var deleteName = allImages[index].url
         var x = confirm("Are you sure?");
         if(!x) return;
-        var url = "/deleteImage?id=" + id;
+        var url = "/deleteImage?url=" + deleteName + "&id=" + id;
         loadURL(url, function(data){
           start();
           generateImageList();

@@ -146,6 +146,7 @@ app.get("/addFeed", function (req, res) {
   });
 });
 
+// s3 delete code debugged with https://stackoverflow.com/questions/27753411/how-do-i-delete-an-object-on-aws-s3-using-javascript 
 app.get('/deleteImage', function(req, res){
     var id = req.query.id;
     var keyName = req.query.url;
