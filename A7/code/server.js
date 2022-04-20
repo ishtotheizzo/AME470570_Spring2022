@@ -148,10 +148,19 @@ app.get("/addFeed", function (req, res) {
 
 app.get('/deleteImage', function(req, res){
     var id = req.query.id;
-    //var keyName = req.query.url;
+    var keyName = req.query.url;
 
     db.collection("images").remove({id:id}, function(e,r){
         res.send("1"); });
+      var params = {
+      Bucket: 'bucket470570',
+      Key: '/'+  keyName
+    };
+
+    s3.deleteObject(params, function(err, data) {
+      if (err) console.log(err, err.stack); // an error occurred
+      else     console.log(data);           // successful response
+    });
 
 });
 

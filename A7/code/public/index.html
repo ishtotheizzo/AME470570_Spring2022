@@ -357,7 +357,6 @@ function updateFriends()
         var url = "/deleteImage?id=" + id;
         loadURL(url, function(data){
           start();
-          feedSelected(1);
           generateImageList();
           document.getElementById("itemDetails").innerHTML = "";
         });
@@ -371,11 +370,9 @@ function updateFriends()
         var url = "./editFeed?id=" + id + "&newName=" + newName + "&newFilter" + newFilter;
         loadURL(url, function(data){
           start();
-          feedSelected(1);
           itemClicked(index);
           });
-        });
-      }
+        };
 
       var main = function(){
   // check whether user is logged in
@@ -408,7 +405,6 @@ var doLogout = function()
             background-size: contain;
             background-position: 50%;
             background-repeat: no-repeat;
-
         '> </div>
 
       <div id='feeds'>
