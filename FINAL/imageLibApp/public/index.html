@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+  <head>
+    <title> Image Library </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cssgram/0.1.12/cssgram.min.css" integrity="sha512-kr3JaEexN5V5Br47Lbg4B548Db46ulHRGGwvyZMVjnghW1BKmqIjgEgVHV8D7V+Cbqm/VBgo3Rcbtv+mGLoWXA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script src='./asyncReq.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/styles/choices.min.css"
+/>
+
+<!--include custom css-->
+
+<link rel ="stylesheet" href="style.css" /> 
+
+<!-- Include Choices JavaScript (latest) -->
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+<!--Include internal Server Info-->
+
+<script src="./imageLib.js"></script>
+<script>
+ $(document).ready(function(){
+    $('.sidenav').sidenav();
+  });
+  
+</script>
+
+  </head>
+
+  <body onload='main()'>
+
+  
+
+      <nav>
+      <div id='nav-wrapper'>
+        <span id='userid' style='text-align:left'> </span>
+        <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a id='feedSelected' class="waves-effect waves-light btn blue" href='javascript:feedSelected(0)'>Dashboard</a></li>
+          <li><a id='feedSelected' class="waves-effect waves-light btn blue" href='javascript:feedSelected(1)'>Image Library</a></li>
+          <li><a id='feedSelected' class="waves-effect waves-light btn blue" href='javascript:feedSelected(2)'>Friends</a></li>
+          <li><a id='feedSelected' class="waves-effect waves-light btn blue" href='javascript:feedSelected(3)'>Account</a></li>
+          <li><a id='logoutButton' class="waves-effect waves-light btn red" href='javascript:doLogout()'>Logout</a></li>
+        </ul>
+    </div>
+  </nav>
+
+  <ul class="sidenav" id="mobile-demo">
+    <li><a id='feedSelected' class="waves-effect waves-light btn blue" href='javascript:feedSelected(0)'>Dashboard</a></li>
+          <li><a id='feedSelected' class="waves-effect waves-light btn blue" href='javascript:feedSelected(1)'>Image Library</a></li>
+          <li><a id='feedSelected' class="waves-effect waves-light btn blue" href='javascript:feedSelected(2)'>Friends</a></li>
+          <li><a id='feedSelected' class="waves-effect waves-light btn blue" href='javascript:feedSelected(3)'>Account</a></li>
+          <li><a id='logoutButton' class="waves-effect waves-light btn red" href='javascript:doLogout()'>Logout</a></li>
+  </ul>
+
+
+    <div id='itemList'> 
+        <div class='submenu'>
+          <h1> Dashboard </h1>
+          Your friends' recently uploaded images. 
+          <div id='dashboardImages'> </div>
+
+        </div>
+
+        <div class='submenu'>
+          <h1> Image Library</h1>
+                <div id='images'> </div>
+              <a class="waves-effect waves-light btn blue" style='position:fixed;bottom:0;'>Upload
+                  <input type='file' id='theFileUploader' onchange='fileUploaded()' accept="image/png, image/jpeg"
+                  style='
+                      position: absolute;
+                      left: 0;
+                      height: 100%;
+                      width: 100%;
+                      opacity: 0;
+                  '
+                  > 
+              </a>
+        </div>
+
+        <div id='fsubmenu' class='submenu'>
+          <h1> Friends</h1>
+           <button onclick="fmSelected('manageFriends',0)"><h1>Manage</h1></button>
+           <button onclick="fmSelected('chatFriends',1)"><h1>Chat</h1></button>
+        </div>
+
+        <div class='submenu'>
+          <h1> Account </h1>
+          <input type='text' id='fname' onchange='updateFriends()'>
+          <input type='text' id='lname' onchange='updateFriends()'>
+        </div>
+
+    </div>
+
+
+
+
+    <div id='itemDetails'>
+      <div id="friendImage" class="submenu"> 
+        <img id='fullImageFriend' width='100%' height='auto'>
+      </div>
+     <div id='imageEditor' class='submenu'>
+      <select onchange='filterChanged()' id='selectedFilter'>
+        <option disabled value='none'> Choose your filter... </option>
+        <option value='aden'> Aden </option>
+        <option value='_1977'> 1977 </option>
+        <option value='brannan'> brannan</option>
+        <option value='brooklyn'> brooklyn</option>
+        <option value='clarendon'> clarendon</option>
+      </select>
+      <img id='fullImage' width='100%' height='auto'>
+
+      <a id="editButton" class="waves-effect waves-light btn blue" style="position:fixed;bottom:0;right:100px;width:100px;" href="javascript:editImage()">Edit</a>
+
+      <a id="deleteButton" class="waves-effect waves-light btn red" style="position:fixed;bottom:0;right:0;width:100px;" href="javascript:deleteImage()">Delete</a>
+
+    </div>
+
+    </div>
+    
+
+
+    <div id='manageFriends' class='submenu'>
+      <h2> Manage Friends </h2>
+       <input type='text 'class='js-choice' id='friendList' onchange='updateFriends()'>
+    </div>
+
+
+
+    <div id='chatFriends' class='submenu'>
+      <h2> Chat Friends </h2>
+      <select onchange='friendChanged()' id='friendSelect'>
+      </select>
+      <div id='chatDiv' style='height:50vh;padding-bottom:10px;overflow:auto;'>
+      </div>
+      <textarea style='height: 100px;bottom:0' onkeydown="chatTyped(event)" id='userChatInput'></textarea>
+    </div>
+
+    </div>
+    <a id='backButton' class="waves-effect waves-light btn blue" style='position:fixed;bottom:0;left:0;width:100px;' href='javascript:goBack()'><i style='margin-right:0' class="material-icons left">arrow_left</i>Back</a>
+
+   </body>
+</html>
+
+
